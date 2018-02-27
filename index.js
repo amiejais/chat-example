@@ -3,13 +3,18 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
+var users = {};
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){
+   socket.on('log in', function (data) {
+    users[data.username] = socket.id;
+  });
+  
   socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+    io.sockets.socket(users[data.username]).emit('chat message', data.message);
   });
 });
 
